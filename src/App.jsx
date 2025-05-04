@@ -3,13 +3,13 @@ import { Route, Routes } from 'react-router';
 import MainLayout from './MainLaout';
 import ChatList from './components/ChatList';
 import Chat from './pages/Chat/Chat';
-import SignupForm from './components/auth/SignUp';
+import Authform from './components/auth/AuthForm';
 
 function App() {
   return (
     <Routes>
       <Route element={<MainLayout />}>
-        <Route path='/' element={<SignupForm />} />
+        <Route path='/' element={<Authform />} />
         <Route path='/chat' element={<Chat />} />
         <Route path='/favorites' element={<ChatList />} />
         <Route path='/archive' element={<ChatList />} />
