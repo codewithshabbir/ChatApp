@@ -2,32 +2,80 @@ import React, { useState } from "react";
 import { Form, Input, Button } from "antd";
 import { UserOutlined, LockOutlined, MailOutlined } from "@ant-design/icons";
 import { supabase } from "../../lib/supabaseClient";
+import { toast, ToastContainer } from "react-toastify";
+import { NavLink } from "react-router";
 
-const Authform = () => {
-  const [formState, setFormState] = useState("Sign Up");
-
-  const handleClick = () => {
-    formState == "Sign Up" ? setFormState("Sign In") : setFormState("Sign Up");
-  };
+const Authform = ({ mode }) => {
+  const formState = mode == "Sign Up" ? "Sign Up" : "Sign In";
+  const [isLoading, setLoading] = useState(false);
+  const [form] = Form.useForm();
 
   const onFinish = async (values) => {
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email: values.email,
-        password: values.password,
-      });
-      console.log(data);
-    } catch (error) {
-      console.log(error);
+    if (formState == "Sign Up") {
+      setLoading(true);
+      console.log(values);
+
+      try {
+        const { data, error } = await supabase.auth.signUp({
+          email: values.email,
+          password: values.password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/verify`,
+            data: {
+              full_name: values.username,
+            }
+          },
+        });
+
+        if (error) {
+          toast.error(error.message || "Signup failed");
+          return;
+        }
+
+        if (data) {
+          toast.success(
+            "Signup successful! Please check your email to verify."
+          );
+          form.resetFields();
+        }
+      } catch (err) {
+        toast.error("An unexpected error occurred. Try again later.");
+      } finally {
+        setLoading(false);
+      }
+    }
+    else if (formState == 'Sign In') {
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: values.email,
+          password: values.password,
+        })
+        if (error) {
+          toast.error(error.message || "SignIn failed");
+          return;
+        }
+        if (data) {
+          toast.success(
+            "SignIn successful!"
+          );
+          form.resetFields();
+        }
+      } catch (err) {
+        toast.error("An unexpected error occurred. Try again later.");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
   return (
     <div className="max-w-md mx-auto p-8 bg-white shadow-lg rounded-md my-20">
+      <ToastContainer position="top-right" />
       <h2 className="text-2xl font-bold text-center mb-6 uppercase">
         {formState}
       </h2>
       <Form
+        form={form}
         name="signup"
         onFinish={onFinish}
         layout="vertical"
@@ -102,15 +150,27 @@ const Authform = () => {
         )}
 
         <div className="text-sm flex pb-4 gap-2">
-          {formState == "Sign Up"
-            ? "Already have an account?"
-            : "Don't have an account?"}
-          <p
-            onClick={handleClick}
-            className="text-blue-600 hover:underline cursor-pointer font-bold"
-          >
-            {formState == "Sign Up" ? "Sign In" : "Sign Up"}
-          </p>
+          {formState === "Sign Up" ? (
+            <p className="text-sm">
+              Already have an account?{" "}
+              <NavLink
+                to="/signin"
+                className="text-blue-600 font-semibold hover:underline"
+              >
+                Sign In
+              </NavLink>
+            </p>
+          ) : (
+            <p className="text-sm">
+              Don't have an account?{" "}
+              <NavLink
+                to="/signup"
+                className="text-blue-600 font-semibold hover:underline"
+              >
+                Sign Up
+              </NavLink>
+            </p>
+          )}
         </div>
 
         <Form.Item>
@@ -119,6 +179,7 @@ const Authform = () => {
             htmlType="submit"
             block
             className="bg-blue-600 hover:bg-blue-700"
+            loading={isLoading}
           >
             {formState}
           </Button>
