@@ -8,7 +8,7 @@ const Verify = () => {
       <div className="bg-white max-w-md w-full p-8 shadow-lg rounded-2xl text-center flex flex-col items-center gap-4">
         <MdOutlineVerified className="text-8xl text-blue-500"/>
         <h1 className="text-3xl font-bold text-blue-600">Email Verified!</h1>
-        <p className="text-gray-600">
+        <p className="text-gray-600"> 
           Thank you for verifying your email. You can now sign in to your account.
         </p>
         <NavLink to="/signin">

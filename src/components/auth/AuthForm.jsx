@@ -3,12 +3,13 @@ import { Form, Input, Button } from "antd";
 import { UserOutlined, LockOutlined, MailOutlined } from "@ant-design/icons";
 import { supabase } from "../../lib/supabaseClient";
 import { toast, ToastContainer } from "react-toastify";
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 
 const Authform = ({ mode }) => {
   const formState = mode == "Sign Up" ? "Sign Up" : "Sign In";
   const [isLoading, setLoading] = useState(false);
   const [form] = Form.useForm();
+  const navigate = useNavigate();
 
   const onFinish = async (values) => {
     if (formState == "Sign Up") {
@@ -59,6 +60,7 @@ const Authform = ({ mode }) => {
             "SignIn successful!"
           );
           form.resetFields();
+          navigate('/chat')
         }
       } catch (err) {
         toast.error("An unexpected error occurred. Try again later.");
