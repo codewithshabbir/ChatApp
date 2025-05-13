@@ -1,14 +1,12 @@
-import React from "react";
-import { useContext } from "react";
 import { FaRegStar } from "react-icons/fa";
 import { IoCallOutline, IoChatbubbleEllipsesOutline, IoSettingsOutline } from "react-icons/io5";
 import { LuArchive } from "react-icons/lu";
 import { NavLink } from "react-router";
-import { Context } from "../context/context";
+import { useAuth } from "../context/AuthContext";
 
 const Sidebar = () => {
-  const {user} = useContext(Context);
-  const username = user.user_metadata.name;
+  const {user} = useAuth();
+  const username = user?.user_metadata.name;
   
   return (
     <div className="flex flex-col justify-between items-center w-18 h-screen px-2 py-6 bg-white shadow-2xl fixed top-0 left-0 transition-all duration-300">

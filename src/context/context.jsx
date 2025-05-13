@@ -1,13 +1,20 @@
-import { createContext } from "react";
+import { createContext, useEffect, useState } from "react";
+import { supabase } from "../lib/supabaseClient";
 
 export const Context = createContext();
 
 export const ContextProvider = ({ children }) => {
-    const userData = JSON.parse(localStorage.getItem('userData')) || {};
+  const [user, setUser] = useState(null);
 
-    return (
-        <Context.Provider value={userData}>
-            {children}
-        </Context.Provider>
-    )
-}
+  useEffect(() => {
+    const getSession = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      setUser(data?.session?.user || null);
+    };
+    getSession();
+  }, []);
+
+  console.log(user);
+
+  return <Context.Provider value={user}>{children}</Context.Provider>;
+};

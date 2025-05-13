@@ -14,8 +14,6 @@ const Authform = ({ mode }) => {
   const onFinish = async (values) => {
     if (formState == "Sign Up") {
       setLoading(true);
-      console.log(values);
-
       try {
         const { data, error } = await supabase.auth.signUp({
           email: values.email,
@@ -46,6 +44,7 @@ const Authform = ({ mode }) => {
       }
     }
     else if (formState == 'Sign In') {
+      setLoading(true);
       try {
         const { data, error } = await supabase.auth.signInWithPassword({
           email: values.email,
