@@ -1,12 +1,20 @@
-import React from "react";
-import { useAuth } from "../../context/AuthContext";
-import { useNavigate } from "react-router";
+import { Navigate } from "react-router";
+import { useUser } from "../../context/UserContext";
+
+const Loader = () => (
+  <div className="flex items-center justify-center h-screen">
+    <h1 className="text-xl font-bold">Loading...</h1>
+  </div>
+);
 
 const ProtectedRoute = ({ children }) => {
-  const { user } = useAuth();
-  const navigate = useNavigate();
-
-  if (!user) return navigate("/signin");
+  const { user, dataLoading } = useUser();
+  if(dataLoading) return <Loader/>
+  console.log(user);
+  
+  if (!user) {
+    return <Navigate to={'/signin'} replace/>
+  }
   return children;
 };
 
